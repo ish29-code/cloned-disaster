@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar/Navbar.jsx";
 import Login from "./pages/Login/Login.jsx";
 import Map from "./pages/Map/Map.jsx";
 import ReportDetails from "./pages/ReportDetails/ReportDetails.jsx";
+import Emergency from './pages/Emergency/Emergency';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -54,6 +55,7 @@ function App() {
           path="/map"
           element={isAuthenticated ? <Map /> : <Navigate to="/login" />}
         />
+        <Route path="/emergency" element={<Emergency />} />
       </Routes>
     </Router>
   );

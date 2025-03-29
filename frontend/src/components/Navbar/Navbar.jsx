@@ -1,112 +1,183 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { FaExclamationTriangle, FaHome, FaMap, FaSignInAlt, FaSignOutAlt, FaGlobeAmericas } from 'react-icons/fa';
 
 const Navbar = ({ isAuthenticated, onLogout }) => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Handle navbar transparency on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-lg border-b border-white/20">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      scrolled 
+        ? "bg-gradient-to-r from-blue-900/95 via-indigo-900/95 to-blue-900/95 shadow-lg" 
+        : "bg-gradient-to-r from-blue-900/70 via-indigo-900/70 to-blue-900/70 backdrop-blur-md"
+    } border-b border-blue-700/30`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo/Brand */}
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
-              DisasterWatch
-            </span>
-          </Link>
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-2 group">
+              <FaGlobeAmericas className="text-2xl text-blue-400 group-hover:text-blue-300 transition-colors duration-300" />
+              <span className="text-xl font-bold text-white group-hover:text-blue-200 transition-colors duration-300">
+                DisasterWatch
+              </span>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <NavLink to="/" currentPath={location.pathname}>
-              Home
-            </NavLink>
-            {isAuthenticated && (
+          <div className="hidden md:flex md:items-center md:space-x-6">
+            {isAuthenticated ? (
               <>
-                <NavLink to="/dashboard" currentPath={location.pathname}>
-                  Dashboard
-                </NavLink>
-                <NavLink to="/map" currentPath={location.pathname}>
-                  Map
-                </NavLink>
+                <Link
+                  to="/"
+                  className={`flex items-center px-3 py-2 text-gray-200 rounded-md transition-all duration-300 ${
+                    location.pathname === "/"
+                      ? "bg-blue-700/40 text-white font-medium"
+                      : "hover:bg-blue-800/30 hover:text-white"
+                  }`}
+                >
+                  <FaHome className="mr-2" />
+                  <span>Home</span>
+                </Link>
+                <Link
+                  to="/map"
+                  className={`flex items-center px-3 py-2 text-gray-200 rounded-md transition-all duration-300 ${
+                    location.pathname === "/map"
+                      ? "bg-blue-700/40 text-white font-medium"
+                      : "hover:bg-blue-800/30 hover:text-white"
+                  }`}
+                >
+                  <FaMap className="mr-2" />
+                  <span>Map</span>
+                </Link>
               </>
-            )}
+            ) : null}
+            <Link
+              to="/emergency"
+              className={`flex items-center px-4 py-2 text-white rounded-md transition-all duration-300 ${
+                location.pathname === "/emergency"
+                  ? "bg-red-600 shadow-md"
+                  : "bg-red-500/90 hover:bg-red-600 shadow hover:shadow-md"
+              }`}
+            >
+              <FaExclamationTriangle className="mr-2" />
+              <span>Emergency</span>
+            </Link>
             {isAuthenticated ? (
               <button
                 onClick={onLogout}
-                className="px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white
-                  transform hover:scale-105 transition-all duration-300 hover:shadow-lg"
+                className="flex items-center px-4 py-2 text-gray-200 border border-blue-700/50 rounded-md transition-all duration-300 hover:bg-blue-800/30 hover:text-white"
               >
-                Logout
+                <FaSignOutAlt className="mr-2" />
+                <span>Logout</span>
               </button>
             ) : (
               <Link
                 to="/login"
-                className="px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white
-                  transform hover:scale-105 transition-all duration-300 hover:shadow-lg"
+                className={`flex items-center px-4 py-2 text-white rounded-md transition-all duration-300 ${
+                  location.pathname === "/login"
+                    ? "bg-blue-600 shadow-md"
+                    : "bg-blue-500/90 hover:bg-blue-600 shadow hover:shadow-md"
+                }`}
               >
-                Login
+                <FaSignInAlt className="mr-2" />
+                <span>Login</span>
               </Link>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100/50 transition-all duration-300"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="flex items-center md:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:bg-blue-800/30 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-300"
+              aria-expanded={isOpen}
+              aria-label="Toggle navigation menu"
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden bg-white/10 backdrop-blur-lg border-t border-white/20">
-          <div className="px-4 pt-2 pb-3 space-y-1">
-            <MobileNavLink
-              to="/"
-              currentPath={location.pathname}
-              onClick={() => setIsOpen(false)}
-            >
-              Home
-            </MobileNavLink>
-            {isAuthenticated && (
+        <div className="md:hidden bg-gradient-to-b from-blue-900/90 to-indigo-900/90 backdrop-blur-md border-t border-blue-700/30 shadow-lg">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {isAuthenticated ? (
               <>
-                <MobileNavLink
-                  to="/dashboard"
-                  currentPath={location.pathname}
+                <Link
+                  to="/"
                   onClick={() => setIsOpen(false)}
+                  className={`flex items-center px-3 py-3 text-base font-medium rounded-md transition-all duration-300 ${
+                    location.pathname === "/"
+                      ? "bg-blue-700/40 text-white"
+                      : "text-gray-200 hover:bg-blue-800/30 hover:text-white"
+                  }`}
                 >
-                  Dashboard
-                </MobileNavLink>
-                <MobileNavLink
+                  <FaHome className="mr-3" />
+                  <span>Home</span>
+                </Link>
+                <Link
                   to="/map"
-                  currentPath={location.pathname}
                   onClick={() => setIsOpen(false)}
+                  className={`flex items-center px-3 py-3 text-base font-medium rounded-md transition-all duration-300 ${
+                    location.pathname === "/map"
+                      ? "bg-blue-700/40 text-white"
+                      : "text-gray-200 hover:bg-blue-800/30 hover:text-white"
+                  }`}
                 >
-                  Map
-                </MobileNavLink>
+                  <FaMap className="mr-3" />
+                  <span>Map</span>
+                </Link>
               </>
-            )}
+            ) : null}
+            <Link
+              to="/emergency"
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center px-4 py-3 text-base font-medium text-white rounded-md transition-all duration-300 ${
+                location.pathname === "/emergency"
+                  ? "bg-red-600 shadow-md"
+                  : "bg-red-500/90 hover:bg-red-600"
+              }`}
+            >
+              <FaExclamationTriangle className="mr-3" />
+              <span>Emergency</span>
+            </Link>
             {isAuthenticated ? (
               <button
                 onClick={() => {
                   setIsOpen(false);
                   onLogout();
                 }}
-                className="w-full text-left px-4 py-2 text-sm rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                className="flex w-full items-center px-4 py-3 text-base font-medium text-gray-200 rounded-md border border-blue-700/50 hover:bg-blue-800/30 hover:text-white transition-all duration-300"
               >
-                Logout
+                <FaSignOutAlt className="mr-3" />
+                <span>Logout</span>
               </button>
             ) : (
               <Link
                 to="/login"
                 onClick={() => setIsOpen(false)}
-                className="block px-4 py-2 text-sm rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                className={`flex items-center px-4 py-3 text-base font-medium text-white rounded-md transition-all duration-300 ${
+                  location.pathname === "/login"
+                    ? "bg-blue-600 shadow-md"
+                    : "bg-blue-500/90 hover:bg-blue-600"
+                }`}
               >
-                Login
+                <FaSignInAlt className="mr-3" />
+                <span>Login</span>
               </Link>
             )}
           </div>
