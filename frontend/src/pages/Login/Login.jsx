@@ -10,7 +10,7 @@ const Login = ({ setIsAuthenticated }) => {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  const API_BASE_URL = "http://localhost:5000/api/auth";
+  const API_BASE_URL = "https://cloned-disaster.onrender.com/api/auth";
 
   const handleAuth = async (e) => {
     e.preventDefault();
