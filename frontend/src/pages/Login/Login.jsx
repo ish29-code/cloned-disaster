@@ -35,7 +35,7 @@ const Login = ({ setIsAuthenticated }) => {
       }
 
       if (data) {
-        if (!isLogin) {
+        if (isLogin) {
           localStorage.setItem("user", JSON.stringify(data.user));
           setIsAuthenticated(true);
           navigate("/");
