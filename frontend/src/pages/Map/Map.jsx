@@ -129,7 +129,7 @@ const MapView = () => {
         
         // Fetch disaster data from the backend
         console.log("Fetching disaster data from API...");
-        const response = await axios.get('http://localhost:5000/api/disasters');
+        const response = await axios.get('https://cloned-disaster.onrender.com/api/disasters');
         console.log("API Response:", response.data);
         
         if (response.data && Array.isArray(response.data) && response.data.length > 0) {
